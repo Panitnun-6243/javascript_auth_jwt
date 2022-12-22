@@ -23,20 +23,22 @@ const connection = mysql.createConnection({
 
 //register
 app.post("/register", jsonParser, function (req, res, next) {
-  connection.execute(
-    "INSERT INTO `users`(`email`, `password`, `fname`, `lname`) VALUES (?,?,?,?)",
-    [req.body.email, req.body.password, req.body.fname, req.body.lname],
-    function (err, results) {
-      if (err) {
-        res.json({ status: "error", message: err });
-        return;
+  bcrypt.hash(req.body.password, saltRounds, function (err, hash) {
+    connection.execute(
+      "INSERT INTO `users`(`email`, `password`, `fname`, `lname`) VALUES (?,?,?,?)",
+      [req.body.email, hash, req.body.fname, req.body.lname],
+      function (err, results) {
+        if (err) {
+          res.json({ status: "error", message: err });
+          return;
+        }
+        res.json({ status: "ok" });
       }
-      res.json({ status: "ok" });
-    }
-  );
+    );
+  });
 });
 
-//start server at port 5000_
+//start server at port 5000
 app.listen(5000, function () {
   console.log("Web server listening on port 5000");
 });
