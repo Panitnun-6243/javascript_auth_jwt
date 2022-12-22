@@ -63,7 +63,11 @@ app.post("/login", jsonParser, function (req, res) {
         function (err, result) {
           //if result = true; it means the password is corrected, then login
           if (result) {
-            res.json({ status: "ok", message: "login success" });
+            //generate token
+            const token = jwt.sign({ email: users[0].email }, jwtkey, {
+              expiresIn: "1h",
+            });
+            res.json({ status: "ok", message: "login success", token });
           } else {
             res.json({ status: "error", message: "login failed" });
           }
@@ -71,6 +75,17 @@ app.post("/login", jsonParser, function (req, res) {
       );
     }
   );
+});
+
+//verify token
+app.post("/auth", jsonParser, function (req, res) {
+  try {
+    const token = req.headers.authorization.split(" ")[1];
+    const decoded = jwt.verify(token, jwtkey);
+    res.json({ status: "ok", decoded });
+  } catch (err) {
+    res.json({ status: "error", message: err.message });
+  }
 });
 
 //start server at port 5000
