@@ -10,6 +10,9 @@ const mysql = require("mysql2");
 //password hash
 const bcrypt = require("bcrypt");
 const saltRounds = 10;
+//jwt
+const jwt = require("jsonwebtoken");
+const jwtkey = "nongtan_soodlour";
 
 //middleware
 app.use(cors());
@@ -36,6 +39,38 @@ app.post("/register", jsonParser, function (req, res, next) {
       }
     );
   });
+});
+
+//login
+app.post("/login", jsonParser, function (req, res) {
+  connection.execute(
+    "SELECT * FROM `users` WHERE email = ?",
+    [req.body.email],
+    function (err, users, fields) {
+      if (err) {
+        res.json({ status: "error", message: err });
+        return;
+      }
+      // check if email is in db or not
+      if (users.length == 0) {
+        res.json({ status: "error", message: "invalid email" });
+        return;
+      }
+      //check password by compare pw from request with pw in db
+      bcrypt.compare(
+        req.body.password,
+        users[0].password,
+        function (err, result) {
+          //if result = true; it means the password is corrected, then login
+          if (result) {
+            res.json({ status: "ok", message: "login success" });
+          } else {
+            res.json({ status: "error", message: "login failed" });
+          }
+        }
+      );
+    }
+  );
 });
 
 //start server at port 5000
