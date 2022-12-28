@@ -17,10 +17,29 @@ function LoginPage() {
   const handleSubmit = (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    console.log({
+    const jsonData = {
       email: data.get("email"),
       password: data.get("password"),
-    });
+    };
+
+    fetch("http://localhost:5000/login", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(jsonData),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.status === "ok") {
+          console.log("Login success:", data);
+        } else {
+          console.log("Login failed:", data);
+        }
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
   };
 
   const navigate = useNavigate();
