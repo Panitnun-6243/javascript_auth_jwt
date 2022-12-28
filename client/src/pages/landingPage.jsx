@@ -1,12 +1,37 @@
 import { Container, Typography, Grid, Button } from "@mui/material";
-import React from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useEffect } from "react";
 
 function LandingPage() {
-  const navigate = useNavigate();
   const handleClick = () => {
-    navigate("/");
+    //clear token
+    localStorage.clear();
+    window.location.reload();
   };
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    //verify token
+    fetch("http://localhost:5000/auth", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + token,
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.status === "ok") {
+          console.log("Verify token success");
+        } else {
+          //remove token
+          console.log("Token expired");
+          localStorage.removeItem("token");
+          window.location = "/";
+        }
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
+  }, []);
 
   return (
     <Container component="main">
