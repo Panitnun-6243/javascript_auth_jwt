@@ -32,7 +32,8 @@ function LoginPage() {
       .then((response) => response.json())
       .then((data) => {
         if (data.status === "ok") {
-          console.log("Login success:", data);
+          localStorage.setItem("token", data.token)
+          window.location = '/landing'
         } else {
           console.log("Login failed:", data);
         }
