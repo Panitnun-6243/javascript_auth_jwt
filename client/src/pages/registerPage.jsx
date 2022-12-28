@@ -17,10 +17,31 @@ function RegisterPage() {
   const handleSubmit = (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    console.log({
+    const jsonData = {
       email: data.get("email"),
       password: data.get("password"),
-    });
+      fname: data.get("firstName"),
+      lname: data.get("lastName"),
+    };
+
+    fetch("http://localhost:5000/register", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(jsonData),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.status === "ok") {
+          console.log("Signup success:", data);
+        } else {
+          console.log("Signup failed:", data);
+        }
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
   };
 
   const navigate = useNavigate();
