@@ -32,10 +32,10 @@ function LoginPage() {
       .then((response) => response.json())
       .then((data) => {
         if (data.status === "ok") {
-          localStorage.setItem("token", data.token)
-          window.location = '/landing'
+          localStorage.setItem("token", data.token);
+          navigate("/landing");
         } else {
-          console.log("Login failed:", data);
+          alert("Invalid credentials! please try again");
         }
       })
       .catch((error) => {

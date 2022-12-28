@@ -35,6 +35,7 @@ function RegisterPage() {
       .then((data) => {
         if (data.status === "ok") {
           console.log("Signup success:", data);
+          navigate("/")
         } else {
           console.log("Signup failed:", data);
         }
